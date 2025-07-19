@@ -1,16 +1,11 @@
-from fastapi import APIRouter, FastAPI
-from app.schemas.recipe import RecipeAdd
+from fastapi import FastAPI
 
-api = FastAPI()
+# Подключаем роутеры
+from app.routers.user import router as users_router
+from app.routers.recipes import router as recipes_router
+from app.routers.family import router as family_router
 
-recipes = []
-
-@api.post("/recipes")
-async def create_recipe(recipe_data: RecipeAdd):
-    recipe = recipe_data.model_dump()
-    recipes.append(recipe)
-    return recipe
-
-@api.get("/recipes")
-async def get_all_recipes():
-    return recipes
+app = FastAPI()
+app.include_router(users_router)
+app.include_router(recipes_router)
+app.include_router(family_router)

@@ -1,6 +1,5 @@
 from app.core.database import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from sqlalchemy.orm import Mapped, mapped_column
 
 class User(Base):
     __tablename__ = "users"
@@ -9,7 +8,3 @@ class User(Base):
     first_name: Mapped[str]
     last_name: Mapped[str]
     phone_number: Mapped[str]
-
-    # Отношения с другими таблицами
-    recipes = relationship("Recipe", back_populates="owner")
-    family = relationship("FamilyUser", back_populates="user")

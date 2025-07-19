@@ -2,8 +2,17 @@ from pydantic import BaseModel
 from app.schemas.user import User
 
 class FamilyCreate(BaseModel):
-    pass
+    name: str
 
-class Family(BaseModel):
+class FamilyCreateResponse(BaseModel):
+    message: str
+    family_id: int
+
+class FamilyUserAddResponse(BaseModel):
+    message: str
     id: int
-    members: list(User)
+
+class FamilyUser(BaseModel):
+    id: int
+    first_name: str
+    last_name: str

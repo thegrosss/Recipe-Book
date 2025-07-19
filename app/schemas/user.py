@@ -10,3 +10,7 @@ class UserAdd(BaseModel):
     first_name: str = Field(min_length=3, max_length=20, description="Имя пользователя")
     last_name: str = Field(min_length=3, max_length=20, description="Фамилия пользователя")
     phone_number: str = Field(description="Номер телефона, начиная с '+'")
+
+class UserAddResponse(BaseModel):
+    message: str = "Пользователь успешно добавлен"
+    id: int
