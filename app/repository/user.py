@@ -1,15 +1,21 @@
-from app.models import Recipe
-from app.schemas.user import UserAdd
+from app.schemas.user import UserRegister
+
 from app.models.user import User
+from app.models.recipe import Recipe
+
 from app.core.database import async_session
+from app.core.security import get_password_hash
+
 from sqlalchemy import select
 
 class Repository:
     @classmethod
-    async def create_user(cls, user_data: UserAdd) -> int:
+    async def create_user(cls, user_data: UserRegister) -> int:
         async with async_session() as session:
             user_dict = user_data.model_dump()
             user = User(**user_dict)
+
+            user_data.password = get_password_hash(user_data.password)
 
             session.add(user)
 
@@ -26,6 +32,9 @@ class Repository:
             return user.scalar_one_or_none()
 
     @classmethod
-    async def add_new_family_member(cls, phone_number: int):
+    async def get_user_recipes(cls, user_id: int) -> list[Recipe]:
         async with async_session() as session:
-            ...
+            query = select(Recipe).filter_by(owner_id=user_id)
+            recipes = await session.execute(query)
+
+            return recipes.scalars().all()

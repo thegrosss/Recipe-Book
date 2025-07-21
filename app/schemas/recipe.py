@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from app.schemas.user import User
 
 class Recipe(BaseModel):
     id: int

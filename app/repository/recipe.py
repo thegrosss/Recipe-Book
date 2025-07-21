@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from app.core.database import async_session
-from app.models import Recipe
+from app.models.recipe import Recipe
 from app.schemas.recipe import RecipeAdd
 
 
@@ -17,14 +17,6 @@ class Repository:
     async def get_all_recipes(cls):
         async with async_session() as session:
             query = select(Recipe)
-            recipes = await session.execute(query)
-
-            return recipes.scalars().all()
-
-    @classmethod
-    async def get_user_recipes(cls, user_id: int) -> list[Recipe]:
-        async with async_session() as session:
-            query = select(Recipe).filter_by(owner_id=user_id)
             recipes = await session.execute(query)
 
             return recipes.scalars().all()
