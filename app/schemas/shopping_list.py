@@ -1,11 +1,15 @@
 from pydantic import BaseModel
-from app.schemas.user import User
 
 class ShoppingList(BaseModel):
+    id: int
+    owner_id: int
     title: str
     items: str
-    owner: User
 
 class ShoppingListAdd(BaseModel):
-    title:str
+    title: str
     items: str
+
+class ShoppingListAddResponse(BaseModel):
+    message: str = "Список продуктов успешно добавлен"
+    id: int

@@ -5,5 +5,6 @@ class ShoppingList(Base):
     __tablename__ = "shopping"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id: Mapped[int]
+    owner_id: Mapped[int]
+    title: Mapped[str]
     items: Mapped[str]
