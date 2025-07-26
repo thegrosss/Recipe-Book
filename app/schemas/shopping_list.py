@@ -13,3 +13,8 @@ class ShoppingListAdd(BaseModel):
 class ShoppingListAddResponse(BaseModel):
     message: str = "Список продуктов успешно добавлен"
     id: int
+
+class ShoppingListGet(BaseModel):
+    id: int
+    title: str
+    items: str
