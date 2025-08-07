@@ -24,3 +24,8 @@ async def get_user_shop_lists(owner: User = Depends(get_current_user)):
                             detail="Списки продуктов не найдены")
 
     return sh_lists
+
+@router.delete("")
+async def delete_list(id: int, owner: User = Depends(get_current_user)):
+    await Repository.delete_list(id)
+    return "Список успешно удален"

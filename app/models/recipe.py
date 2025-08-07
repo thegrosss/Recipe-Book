@@ -1,14 +1,17 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
-from sqlalchemy.orm import Mapped, mapped_column
 
 class Recipe(Base):
     __tablename__ = "recipes"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    title: Mapped[str]
-    description: Mapped[str]
-    instruction: Mapped[str]
+    tag: Mapped[str]
+    content: Mapped[str]
+    image: Mapped[str] = mapped_column(nullable=True)
 
-    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    owners: Mapped[list["User"]] = relationship(
+        back_populates="recipes",
+        secondary="users_recipes",
+        lazy="selectin"
+    )

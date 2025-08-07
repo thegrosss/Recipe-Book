@@ -1,8 +1,6 @@
 from authx import AuthX, AuthXConfig
-
 from app.core.config import settings
 from app.repository.user import Repository
-from app.core.security import verify_password
 
 config = AuthXConfig(
     JWT_ALGORITHM=settings.ALGORITHM,
@@ -13,10 +11,10 @@ config = AuthXConfig(
 
 auth = AuthX(config=config)
 
-async def authentication_user(phone_number: str, password: str):
+async def authentication_user(phone_number: str):
     user = await Repository.find_user(phone_number=phone_number)
 
-    if not user or not verify_password(password=password, hashed_password=user.password):
+    if not user:
         return None
     else:
         return user

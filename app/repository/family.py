@@ -28,7 +28,7 @@ class Repository:
     @classmethod
     async def find_family_by_user_id(cls, user_id: int) -> int:
         async with async_session() as session:
-            query = select(FamilyUser.family_id).where(FamilyUser.user_id == user_id)
+            query = select(FamilyUser.family_id).where(user_id == FamilyUser.user_id)
             family = await session.execute(query)
             return family.scalars().first()
 
@@ -76,12 +76,12 @@ class Repository:
                 return []
 
             members = await Repository.find_family_members(family_id)
-            user_ids = [member.id for member in members]
+            member_ids = [member.id for member in members]
 
-            if not user_ids:
+            if not member_ids:
                 return []
 
-            recipe_query = select(Recipe).where(Recipe.owner_id.in_(user_ids))
+            recipe_query = select(Recipe).where(Recipe.owners.any(User.id.in_(member_ids)))
             recipes = await session.execute(recipe_query)
 
             return recipes.scalars().all()

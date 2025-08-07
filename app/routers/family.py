@@ -17,6 +17,11 @@ router = APIRouter(prefix="/families", tags=["Семьи"])
 @router.post("", response_model=FamilyCreateResponse)
 async def create_family(name:str = Annotated[FamilyCreate, Depends()],
                         owner: User = Depends(get_current_user)):
+    user_family = await family_rep.find_family_by_user_id(owner.id)
+    if user_family:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail="У вас уже есть семья")
+
     family_id = await family_rep.create_family(name, owner.id)
 
     return FamilyCreateResponse(
@@ -24,7 +29,12 @@ async def create_family(name:str = Annotated[FamilyCreate, Depends()],
         family_id=family_id
     )
 
-@router.get("/{family_id}", response_model=list[FamilyUser])
+@router.get("")
+async def find_family_by_user_id(owner: User = Depends(get_current_user)):
+    user_family = await family_rep.find_family_by_user_id(owner.id)
+    return user_family
+
+@router.get("/members", response_model=list[FamilyUser])
 async def find_family_members(user: User = Depends(get_current_user)):
     family_id = await family_rep.find_family_by_user_id(user_id=user.id)
 
@@ -40,7 +50,7 @@ async def find_family_members(user: User = Depends(get_current_user)):
 
     return members
 
-@router.post("/{family_id}", response_model=FamilyUserAddResponse)
+@router.post("/members", response_model=FamilyUserAddResponse)
 async def add_new_member(new_member_id: int,
                          user: User = Depends(get_current_user)):
     if new_member_id == user.id:
@@ -74,7 +84,7 @@ async def add_new_member(new_member_id: int,
         id=new_member_id,
     )
 
-@router.get("/{family_id}/recipes", response_model=list[Recipe])
+@router.get("/recipes", response_model=list[Recipe])
 async def get_family_recipes(user: User = Depends(get_current_user)):
 
     family = await family_rep.find_family_by_user_id(user_id=user.id)
@@ -85,4 +95,8 @@ async def get_family_recipes(user: User = Depends(get_current_user)):
                              "не можете посмотреть семейные рецепты")
 
     recipes = await family_rep.get_family_recipes(user.id)
+
+    if not recipes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                      detail="Рецептов не найдено")
     return recipes

@@ -1,7 +1,8 @@
 from app.core.database import async_session
 from app.models.shopping_list import ShoppingList
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
+
 
 class Repository:
     @classmethod
@@ -21,3 +22,11 @@ class Repository:
             lists = await session.execute(query)
 
             return lists.scalars().all()
+
+    @classmethod
+    async def delete_list(cls, id: int):
+        async with async_session() as session:
+            query = delete(ShoppingList).filter_by(id=id)
+            await session.execute(query)
+            await session.flush()
+            await session.commit()
